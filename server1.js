@@ -1,35 +1,43 @@
 const express = require("express");
+const fs = require("fs").promises;
 const path = require("path");
 require("dotenv").config();
 
 const app = express();
 const PORT = 3000;
+const DATA_FILE = path.join(__dirname, "data", "heroes.json");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
+  
 
-const { MongoClient } = require("mongodb");
-const MONGODB_URI = process.env.MONGO_DB_URI;
-let db;
-MongoClient.connect(MONGODB_URI)
-  .then((client) => {
-    console.log("✅ Connected to MongoDB");
-    db = client.db("superhero-db");
-  })
-
-  .catch((error) => console.error("❌ MongoDB Error", error));
-
-function getHeroesCollection() {
-  if (!db) throw new Error("Database not initialized");
-  return db.collection("heroes");
+async function readHeroes() {
+  try {
+    const data = await fs.readFile(DATA_FILE, "utf8");
+    return JSON.parse(data);
+  } catch (error) {
+    return [];
+  }
 }
+async function writeHeroes(heroes) {
+  await fs.writeFile(DATA_FILE, JSON.stringify(heroes, null, 2));
+}
+async function initializeDataFile() {
+  try {
+    await fs.access(DATA_FILE);
+  } catch {
+    await writeHeroes([]);
+  }
+}
+initializeDataFile();
 
 //Create POST Route
 
 app.post("/heroes", async (req, res) => {
   try {
+    const heroes = await readHeroes();
     const newHero = {
       id: Date.now().toString(),
       superName: req.body.superName,
@@ -39,8 +47,8 @@ app.post("/heroes", async (req, res) => {
       secretIdentity: req.body.secretIdentity === "true",
       createdAt: new Date().toISOString(),
     };
-    const collection = getHeroesCollection();
-    const result = await collection.insertOne(newHero);
+    heroes.push(newHero);
+    await writeHeroes(heroes);
     res.status(201).json({
       success: true,
       message: "Hero created successfully!",
@@ -54,8 +62,7 @@ app.post("/heroes", async (req, res) => {
 //Create read GET route
 app.get("/heroes", async (req, res) => {
   try {
-    const collection = getHeroesCollection();
-    const heroes = await collection.find().toArray();
+    const heroes = await readHeroes();
     if (req.accepts("html")) {
       res.render("heroList", { heroes });
     } else {
@@ -66,58 +73,46 @@ app.get("/heroes", async (req, res) => {
   }
 });
 
+// Create edit PUT route
 app.put("/heroes/:id", async (req, res) => {
   try {
-    const heroId = req.params.id;
-    if (!MongoClient.isValid(heroId)) {
-      return res.status(400).json({ success: false, error: "Invalid hero ID" });
+    const heroes = await readHeroes();
+    const heroIndex = heroes.findIndex((h) => h.id === req.params.id);
+    if (heroIndex === -1) {
+      return res.status(404).json({ success: false, error: "Hero not found" });
     }
-
-    const updateFields = {
+    heroes[heroIndex] = {
+      ...heroes[heroIndex],
       superName: req.body.superName,
       realName: req.body.realName,
       superpower: req.body.superpower,
       powerLevel: parseInt(req.body.powerLevel),
       secretIdentity: req.body.secretIdentity === "true",
-      updatedAt: new Date(),
+      updatedAt: new Date().toISOString(),
     };
-
-    const collection = getHeroesCollection();
-    const result = await collection.findOneAndUpdate(
-      { _id: new ObjectId(heroId) },
-      { $set: updateFields },
-      { returnDocument: "after" }
-    );
-
-    if (!result.value) {
-      return res.status(404).json({ success: false, error: "Hero not found" });
-    }
-
-    res.json({ success: true, data: result.value });
+    await writeHeroes(heroes);
+    res.json({ success: true, data: heroes[heroIndex] });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
 
+
+//Create a delete DELETE route
 app.delete("/heroes/:id", async (req, res) => {
   try {
-    const heroId = req.params.id;
-    if (!ObjectId.isValid(heroId)) {
-      return res.status(400).json({ success: false, error: "Invalid hero ID" });
-    }
-
-    const collection = getHeroesCollection();
-    const result = await collection.deleteOne({ _id: new ObjectId(heroId) });
-
-    if (result.deletedCount === 0) {
+    const heroes = await readHeroes();
+    const filteredHeroes = heroes.filter((h) => h.id !== req.params.id);
+    if (heroes.length === filteredHeroes.length) {
       return res.status(404).json({ success: false, error: "Hero not found" });
     }
-
+    await writeHeroes(filteredHeroes);
     res.json({ success: true, message: "Hero deleted" });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 });
+
 
 //Form Route
 app.get("/", (req, res) => {

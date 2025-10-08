@@ -1,0 +1,12 @@
+[
+  {
+    "id": "1759963012265",
+    "superName": "Superman",
+    "realName": "Clark Kent",
+    "superpower": "Webs",
+    "powerLevel": 10,
+    "secretIdentity": false,
+    "createdAt": "2025-10-08T22:36:52.265Z",
+    "updatedAt": "2025-10-08T22:37:05.901Z"
+  }
+]
