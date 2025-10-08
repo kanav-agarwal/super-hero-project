@@ -36,3 +36,7 @@ h1 {
 .btn:hover {
   transform: scale(1.05);
 }
+.mb-4
+{
+  justify-self: center;
+}
