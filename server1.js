@@ -1,3 +1,5 @@
+// App using JSON as Database
+
 const express = require("express");
 const fs = require("fs").promises;
 const path = require("path");
@@ -11,7 +13,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
-  
 
 async function readHeroes() {
   try {
@@ -97,7 +98,6 @@ app.put("/heroes/:id", async (req, res) => {
   }
 });
 
-
 //Create a delete DELETE route
 app.delete("/heroes/:id", async (req, res) => {
   try {
@@ -112,7 +112,6 @@ app.delete("/heroes/:id", async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
-
 
 //Form Route
 app.get("/", (req, res) => {

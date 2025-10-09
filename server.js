@@ -1,3 +1,5 @@
+// App using Mongo as Database
+
 const express = require("express");
 const path = require("path");
 require("dotenv").config();
@@ -31,7 +33,6 @@ function getHeroesCollection() {
 app.post("/heroes", async (req, res) => {
   try {
     const newHero = {
-      id: Date.now().toString(),
       superName: req.body.superName,
       realName: req.body.realName,
       superpower: req.body.superpower,
@@ -56,6 +57,10 @@ app.get("/heroes", async (req, res) => {
   try {
     const collection = getHeroesCollection();
     const heroes = await collection.find().toArray();
+    const heroesWithStringIds = heroes.map((h) => ({
+      ...h,
+      _id: h._id.toString(),
+    }));
     if (req.accepts("html")) {
       res.render("heroList", { heroes });
     } else {
@@ -66,10 +71,12 @@ app.get("/heroes", async (req, res) => {
   }
 });
 
+const { ObjectId } = require("mongodb");
+
 app.put("/heroes/:id", async (req, res) => {
   try {
     const heroId = req.params.id;
-    if (!MongoClient.isValid(heroId)) {
+    if (!ObjectId.isValid(heroId)) {
       return res.status(400).json({ success: false, error: "Invalid hero ID" });
     }
 
@@ -89,7 +96,7 @@ app.put("/heroes/:id", async (req, res) => {
       { returnDocument: "after" }
     );
 
-    if (!result.value) {
+    if (!result) {
       return res.status(404).json({ success: false, error: "Hero not found" });
     }
 
@@ -115,6 +122,7 @@ app.delete("/heroes/:id", async (req, res) => {
 
     res.json({ success: true, message: "Hero deleted" });
   } catch (error) {
+    console.log("Error Occured", error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
