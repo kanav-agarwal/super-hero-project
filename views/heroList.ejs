@@ -17,8 +17,8 @@
   <body>
     <div class="container mt-4">
       <h1 class="mb-4">
-        <i class="bi bi-stars me-2"></i>
-        Superhero Database
+        <i class="bi bi-bug me-2"></i>
+        Marvel Superhero Database!
       </h1>
       <% if (heroes && heroes.length > 0) { %>
       <div class="row">
@@ -39,10 +39,13 @@
                   <span class="badge bg-warning text-dark"
                     ><%= hero.powerLevel %>/10</span
                   ><br />
+                  <strong>Description:</strong> <%= hero.desc %><br />
                   <strong>Secret Identity:</strong>
                   <% if (hero.secretIdentity) { %>
                   <i class="bi bi-lock-fill text-danger"></i> Yes <% } else { %>
                   <i class="bi bi-unlock-fill text-success"></i> No <% } %>
+                  <br>
+                 
                 </p>
                 <div class="d-flex gap-2">
                   <button
@@ -95,6 +98,16 @@
                   max="10"
                   placeholder="Power Level"
                 />
+                   <input
+                  type="text"
+                  class="form-control mb-2"
+                  id="desc-<%= hero._id %>"
+                  value="<%= hero.desc %>"
+                  min="1"
+                  max="10"
+                  placeholder="Description"
+                />
+                 
                 <div class="form-check mb-2">
                   <input type="checkbox" class="form-check-input"
                   id="secretIdentity-<%= hero._id %>" <%= hero.secretIdentity ?
@@ -104,6 +117,7 @@
                     for="secretIdentity-<%= hero._id %>"
                     >Secret Identity</label
                   >
+               
                 </div>
                 <div class="d-flex gap-2">
                   <button
@@ -139,7 +153,11 @@
       </div>
     </div>
 
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/js/heroActions.js"></script>
   </body>
 </html>
+
+
+

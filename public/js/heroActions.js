@@ -11,9 +11,11 @@ async function updateHero(id) {
   const realName = document.getElementById(`realName-${id}`).value;
   const superpower = document.getElementById(`superpower-${id}`).value;
   const powerLevel = document.getElementById(`powerLevel-${id}`).value;
+   const desc = document.getElementById(`desc-${id}`).value;
   const secretIdentity = document.getElementById(
     `secretIdentity-${id}`
   ).checked;
+ 
   if (!superName.trim() || !realName.trim() || !superpower.trim()) {
     alert("Please fill in all required fields");
     return;
@@ -28,6 +30,7 @@ async function updateHero(id) {
         superpower,
         powerLevel,
         secretIdentity,
+        desc,
       }),
     });
     if (response.ok) {
@@ -44,6 +47,7 @@ async function deleteHero(id) {
   if (!confirm("Are you sure you want to delete this hero?")) {
     return;
   }
+
 
   try {
     const response = await fetch(`/heroes/${id}`, {

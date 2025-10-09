@@ -25,10 +25,11 @@
         </div>
         <div class="card-body">
           <form id="hero-form">
-            <%- include('partials/form-input', superName) %> 
-            <%- include('partials/form-input', realName) %> 
-            <%- include('partials/form-input', superpower) %> 
+            <%- include('partials/form-input', superName) %>
+            <%- include('partials/form-input', realName) %>
+            <%- include('partials/form-input', superpower) %>
             <%- include('partials/form-input', powerLevel) %>
+             <%- include('partials/form-input', desc) %>
             <div class="mb-3 form-check">
               <input
                 type="checkbox"
@@ -39,6 +40,7 @@
               <label class="form-check-label" for="secretIdentity">
                 Has Secret Identity
               </label>
+               
             </div>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
               <button type="reset" class="btn btn-outline-secondary">

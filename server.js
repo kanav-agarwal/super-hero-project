@@ -37,6 +37,7 @@ app.post("/heroes", async (req, res) => {
       realName: req.body.realName,
       superpower: req.body.superpower,
       powerLevel: parseInt(req.body.powerLevel),
+      desc: req.body.desc,
       secretIdentity: req.body.secretIdentity === "true",
       createdAt: new Date().toISOString(),
     };
@@ -85,6 +86,7 @@ app.put("/heroes/:id", async (req, res) => {
       realName: req.body.realName,
       superpower: req.body.superpower,
       powerLevel: parseInt(req.body.powerLevel),
+      desc: req.body.desc,
       secretIdentity: req.body.secretIdentity === "true",
       updatedAt: new Date(),
     };

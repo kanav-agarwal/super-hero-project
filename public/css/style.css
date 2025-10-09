@@ -2,6 +2,7 @@ body {
   background: linear-gradient(135deg, red 0%, blue 100%);
   min-height: 100vh;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+ 
 }
 .container {
   background: linear-gradient(135deg, red 0%, black 25%, blue 50%, white 75%, red 100%);

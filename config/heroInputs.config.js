@@ -1,3 +1,4 @@
+
 module.exports = {
     superName: {
         id: 'superName',
@@ -38,5 +39,15 @@ module.exports = {
         label: 'Has Secret Identity?',
         type: 'checkbox',
         required: false
+    },
+     desc: {
+        id: 'desc',
+        name: 'desc',
+        label: 'Description',
+        type: 'text',
+        required: true,
+        placeholder: 'Description'
     }
 };
+
+
